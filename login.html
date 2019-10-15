@@ -5,16 +5,18 @@
      	<meta charset="utf-8"/>
 </head>
 <body>
-     <header>
+    	<header>
         	<h1>LOGIN</h1>
-    </header>
-    <form action="login_redirect.php" method="POST"> <!--log in-->
+    	</header>
+	<!--log in-->
+    	<form action="login_redirect.php" method="POST">
             	<p><label>Username: </label> <input type="text" name="username"  id="username" required/></p>
 	     	<p><label>Password: </label> <input type="text" name="password" id="password" required /></p>
 	<p><input type = "submit" value = "login"></p>
-    </form>
-    <form action = "new_user.php"> <!-- create new user-->
-	<p><input type = "submit" value = "Create Account"></p>
-    </form>
+	<!-- create new user-->
+    	</form>
+    	<form action = "new_user.php">
+		<p><input type = "submit" value = "Create Account"></p>
+    	</form>
 </body>
 </html>
