@@ -17,14 +17,13 @@
             		<label>Set Password: </label> <input type="text" name="password" id="password" required />
         	</p>
         	<p>
-           		<input type = "submit" value = "CREATE">
+           		<input type = "submit" value = "Create">
         	</p>
    	</form>
 <?php
 if(isset($_POST['username']) && isset($_POST['password'])){
 	require('database.php'); # connect to database
 	
-	# Preface: multiple code ideas and lines were taken from 330 wiki
 	$username = trim((string)$_POST['username']);
 	$password = (string)$_POST['password'];
 	
