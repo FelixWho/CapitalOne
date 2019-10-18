@@ -7,6 +7,19 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body id = "body">
+<?php
+session_start();
+if(isset($_SESSION['username'])){
+	# logged in
+	echo "<div><form action = 'logout.php'>";
+   	echo "<input type='submit' value='Log Out' name='Logout'/>";
+        echo "</form></div>";
+} else {
+	echo "<div><form action = 'login.html'>";
+        echo "<input type='submit' value='Log In' name='Login'/>";
+        echo "</form></div>";
+}
+?>
 <form action="result.html" method="GET">
 <div>
 <label for="dateParam">Date:</label>

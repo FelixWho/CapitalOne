@@ -16,7 +16,7 @@ if(isset($_POST['username'])){
         	session_start();
         	$_SESSION['username'] = $username;
 		$_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32)); // CSRF token, best security practices
-		header("Location: search.html"); // redirect: login success
+		header("Location: search.php"); // redirect: login success
 		exit;
     	} else{
 		header("Location: login.html"); // redirect: login failed
