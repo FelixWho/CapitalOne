@@ -22,10 +22,13 @@ if(isset($_SESSION['username'])){
 ?>
 
 <!--search by date-->
-<form action="result.html" method="GET">
 <div>
-<label for="dateParam">Date:</label>
-<input type="date" id = "dateParam">
+<label for="dateMinParam">Minimum Date Aired:</label>
+<input type="date" id = "dateMinParam">
+</div>
+<div>
+<label for="dateMaxParam">Maximum Date Aired:</label>
+<input type="date" id = "dateMaxParam">
 </div>
 
 <!--search by difficulty value-->
@@ -43,9 +46,17 @@ if(isset($_SESSION['username'])){
 	<option value="1000">
 </datalist>
 </div>
+
+<!--search by category-->
+<div>
+<label for="catParam">Category:</label>
+<input list="category" id = "catParam">
+<datalist id="category">
+	<!--will populate with javascript + webscrape-->
+</datalist>
+</div>
+
 <input type="submit" id = "search" value="Search">
-<input type="submit" id = "random" value="I'm Feeling Adventurous"> <!--get random question like Google does-->
-</form>
 
 </body>
 <script>
@@ -53,22 +64,33 @@ if(isset($_SESSION['username'])){
 	// event listeners
 	//
 	document.getElementById("search").addEventListener("click", search, false);
+	document.getElementById("dateMinParam").addEventListener("change", dateCheck, false);
+	document.getElementById("dateMaxParam").addEventListener("change", dateCheck, false);
 	//document.addEventListener("DOMContentLoaded", fetchCategories, false);
 	document.getElementById("random").addEventListener("click", rand, false);	
 
 	//
 	// functions (extra functions maybe included as files)
 	//
-	function rand(event){ // redirect to random question page
-		window.location("random.html");
+	function dateCheck(event){ // prevents min date parameter from being greater than max date parameter and vice versa
+		let dMin = new Date(document.getElementById("dateMinParam").value);
+		let dMax = new Date(document.getElementById("dateMaxParam").value);
+		if(event.target == document.getElementById("dateMinParam") && dMin > dMax) {
+			document.getElementById("dateMaxParam").value = document.getElementById("dateMinParam").value;
+		}
+		if(dMax < dMin){
+			document.getElementById("dateMinParam").value = document.getElementById("dateMaxParam").value;
+		}
 	}
 	function search(event){ // search button pressed
 		const val = document.getElementById("valueParam").value;
-		const dat = new Date(document.getElementById("dateParam").value).toISOString();
-			
+		const datMin = document.getElementById("dateMinParam").value;
+		const datMax = document.getElementById("dateMaxParam").value;
+		console.log(encodeURIComponent(datMin));	
 		let url = "http://jservice.io/api/clues?"
-		.concat("value="+val)
-		.concat("&min_date="+dat);
+		.concat("value="+encodeURIComponent(val))
+		.concat("&min_date="+encodeURIComponent(datMin))
+		.concat("&max_date="+encodeURIComponent(datMax));
 		
 		// call api
 		fetch(url)
@@ -78,13 +100,12 @@ if(isset($_SESSION['username'])){
 		});
 					
 	}
-	function fetchCategories(event){ // call jService API
-		fetch("http://jservice.io/api/category?id=1")
-		.then(response => {
-			let data = JSON.parse(JSON.stringify(response))
-			console.log(data.title);
-		})
-		.then(data => console.log(data));
+	function fetchCategories(event){ // call jService search API
+		fetch("http://jservice.io/search?query=a")
+		.then(response => response.json())
+		.then(content => {
+			
+		});
 		//const xmlHttp = new XMLHttpRequest();
 		
                 //xmlHttp.open("GET", "http://jservice.io/api/category?id=1", true);
