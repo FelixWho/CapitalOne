@@ -66,8 +66,7 @@ if(isset($_SESSION['username'])){
 	document.getElementById("search").addEventListener("click", search, false);
 	document.getElementById("dateMinParam").addEventListener("change", dateCheck, false);
 	document.getElementById("dateMaxParam").addEventListener("change", dateCheck, false);
-	//document.addEventListener("DOMContentLoaded", fetchCategories, false);
-	document.getElementById("random").addEventListener("click", rand, false);	
+	document.getElementById("catParam").addEventListener("change", fetchCategories, false);
 
 	//
 	// functions (extra functions maybe included as files)
@@ -102,10 +101,8 @@ if(isset($_SESSION['username'])){
 	}
 	function fetchCategories(event){ // call jService search API
 		fetch("http://jservice.io/search?query=a")
-		.then(response => response.json())
-		.then(content => {
-			
-		});
+		.then(response => response.text())
+		.then(response => {console.log(response);});
 		//const xmlHttp = new XMLHttpRequest();
 		
                 //xmlHttp.open("GET", "http://jservice.io/api/category?id=1", true);
