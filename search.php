@@ -100,9 +100,25 @@ if(isset($_SESSION['username'])){
 					
 	}
 	function fetchCategories(event){ // call jService search API
-		fetch("http://jservice.io/search?query=a")
+		let dl = document.getElementById("category");
+		while(dl.firstChild){
+			dl.removeChild(dl.firstChild); // clear the datalist in preparation for new elements
+		}
+
+		fetch("http://jservice.io/search?query="+document.getElementById("catParam").value)
 		.then(response => response.text())
-		.then(response => {console.log(response);});
+		.then(response => {
+			let html = document.createElement("HTML");
+			html.innerHTML = response;
+			let table = html.getElementsByTagName("tbody")[0];
+			let rows = table.children;
+			for(let i = 0; i < rows.length; i++){
+				// console.log(rows[i].children[0].children[0].textContent);
+				let item = document.createElement("OPTION");
+				item.value = rows[i].children[0].children[0].textContent;
+				dl.appendChild(item);
+			}
+		});
 		//const xmlHttp = new XMLHttpRequest();
 		
                 //xmlHttp.open("GET", "http://jservice.io/api/category?id=1", true);
