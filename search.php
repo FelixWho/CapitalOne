@@ -20,12 +20,15 @@ if(isset($_SESSION['username'])){
         echo "</form></div>";
 }
 ?>
+
+<!--search by date-->
 <form action="result.html" method="GET">
 <div>
 <label for="dateParam">Date:</label>
 <input type="date" id = "dateParam">
 </div>
 
+<!--search by difficulty value-->
 <div>
 <label for="valueParam">Difficulty:</label>
 <input list="values" id = "valueParam">
@@ -38,12 +41,10 @@ if(isset($_SESSION['username'])){
 	<option value="600">
 	<option value="800">
 	<option value="1000">
-	<option value="1200">
-	<option value="2000">
 </datalist>
 </div>
 <input type="submit" id = "search" value="Search">
-<input type="submit" id = "random" value="I'm Feeling Adventurous">
+<input type="submit" id = "random" value="I'm Feeling Adventurous"> <!--get random question like Google does-->
 </form>
 
 </body>
@@ -62,7 +63,20 @@ if(isset($_SESSION['username'])){
 		window.location("random.html");
 	}
 	function search(event){ // search button pressed
-	
+		const val = document.getElementById("valueParam").value;
+		const dat = new Date(document.getElementById("dateParam").value).toISOString();
+			
+		let url = "http://jservice.io/api/clues?"
+		.concat("value="+val)
+		.concat("&min_date="+dat);
+		
+		// call api
+		fetch(url)
+		.then(response => response.json())
+		.then(content => {
+			console.log(content);
+		});
+					
 	}
 	function fetchCategories(event){ // call jService API
 		fetch("http://jservice.io/api/category?id=1")
