@@ -61,12 +61,17 @@ if(isset($_SESSION['username'])){
 </body>
 <script>
 	//
+	// global variables
+	//
+	let catID = {}; // dictionary holding category-id pairs
+
+	//
 	// event listeners
 	//
 	document.getElementById("search").addEventListener("click", search, false);
 	document.getElementById("dateMinParam").addEventListener("change", dateCheck, false);
 	document.getElementById("dateMaxParam").addEventListener("change", dateCheck, false);
-	document.getElementById("catParam").addEventListener("change", fetchCategories, false);
+	document.getElementById("catParam").addEventListener("input", fetchCategories, false);
 
 	//
 	// functions (extra functions maybe included as files)
@@ -85,11 +90,17 @@ if(isset($_SESSION['username'])){
 		const val = document.getElementById("valueParam").value;
 		const datMin = document.getElementById("dateMinParam").value;
 		const datMax = document.getElementById("dateMaxParam").value;
-		console.log(encodeURIComponent(datMin));	
+		const category = document.getElementById("catParam").value;
+		
 		let url = "http://jservice.io/api/clues?"
 		.concat("value="+encodeURIComponent(val))
 		.concat("&min_date="+encodeURIComponent(datMin))
 		.concat("&max_date="+encodeURIComponent(datMax));
+		if(category in catID){
+			url = url.concat("&category="+encodeURIComponent(catID[category]));
+		} else {
+			url = url.concat("&category=0"); // returns nothing
+		}
 		
 		// call api
 		fetch(url)
@@ -104,6 +115,7 @@ if(isset($_SESSION['username'])){
 		while(dl.firstChild){
 			dl.removeChild(dl.firstChild); // clear the datalist in preparation for new elements
 		}
+		catID = {};
 
 		fetch("http://jservice.io/search?query="+document.getElementById("catParam").value)
 		.then(response => response.text())
@@ -113,7 +125,11 @@ if(isset($_SESSION['username'])){
 			let table = html.getElementsByTagName("tbody")[0];
 			let rows = table.children;
 			for(let i = 0; i < rows.length; i++){
-				// console.log(rows[i].children[0].children[0].textContent);
+				let txt = rows[i].children[0].children[0].textContent;
+				let id = rows[i].children[0].children[0].getAttribute("href").substring(9);	
+			
+				catID[txt] = id; // map category name to id	
+	
 				let item = document.createElement("OPTION");
 				item.value = rows[i].children[0].children[0].textContent;
 				dl.appendChild(item);
@@ -124,14 +140,6 @@ if(isset($_SESSION['username'])){
                 //xmlHttp.open("GET", "http://jservice.io/api/category?id=1", true);
                 //xmlHttp.addEventListener("load", callbackCategories, false);
                 //xmlHttp.send(null);
-	}
-	function callbackCategories(event){
-		data = JSON.parse(event.target.responseText);
-		if(data.hasOwnProperty("status")){
-			
-			return;
-		}
-		console.log(data.title);
 	}
 	
 	
