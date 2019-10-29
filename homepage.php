@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Jeopardy Search Engine</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Jeopardy Search Engine</title>
+        <meta charset="utf-8"/>
 	<!--include jQuery-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body id = "body">
-
 <?php
 session_start();
 if(isset($_SESSION['username'])){
@@ -28,12 +24,12 @@ if(isset($_SESSION['username'])){
 
 <!--search by date-->
 <div>
-<!--<label for="dateMinParam">Minimum Date Aired:</label>-->
-<input type="text" id = "dateMinParam" placeholder="Pick minimum date" readonly>
+<label for="dateMinParam">Minimum Date Aired:</label>
+<input type="date" id = "dateMinParam">
 </div>
 <div>
-<!--<label for="dateMaxParam">Maximum Date Aired:</label>-->
-<input type="text" id = "dateMaxParam" placeholder="Pick maximum date" readonly>
+<label for="dateMaxParam">Maximum Date Aired:</label>
+<input type="date" id = "dateMaxParam">
 </div>
 
 <!--search by difficulty value-->
@@ -57,7 +53,7 @@ if(isset($_SESSION['username'])){
 <label for="catParam">Category:</label>
 <input list="category" id = "catParam">
 <datalist id="category">
-	<!--will populate with javascript + webscraping-->
+	<!--will populate with javascript + webscrape-->
 </datalist>
 </div>
 
@@ -65,137 +61,102 @@ if(isset($_SESSION['username'])){
 
 </body>
 <script>
-
-    /******
-                jQuery UI elements
-    ******/
-
-    $("#dateMinParam").datepicker({
-        yearRange: "1950:+0",
-        changeMonth: true,
-        changeYear: true,
-        onSelect: function() {
-            dateCheck(this);
-        }
-    });
-    $("#dateMaxParam").datepicker({
-        yearRange: "1950:+0",
-        changeMonth: true,
-        changeYear: true,
-        onSelect: function() {
-            dateCheck(this);
-        }
-    });
-
-	/******
-                GLOBAL VARIABLES
-    ******/
-
+	//
+	// global variables
+	//
 	let catID = {}; // dictionary holding category-id pairs
 
-	/******
-                EVENT LISTENERS
-    ******/
-
+	//
+	// event listeners
+	//
 	document.getElementById("search").addEventListener("click", function(event) {displayEvents(0);}, false);
 	document.getElementById("dateMinParam").addEventListener("change", dateCheck, false);
 	document.getElementById("dateMaxParam").addEventListener("change", dateCheck, false);
 	document.getElementById("catParam").addEventListener("input", fetchCategories, false);
 
-	/******
-                FUNCTIONS
-                (extra functions maybe included as files) 
-    ******/
-
+	//
+	// functions (extra functions maybe included as files)
+	//
 	function displayEvents(event, offset){
-        // clear table UI
-        let tab = document.getElementById("results");
-        if(tab) { tab.remove(); }
-
 		let body = document.getElementById("body");
 		
 		let results = document.createElement("TABLE");
-        results.id = "results";
-
 		search(offset).then(content => {
-			let arr = JSON.parse(JSON.stringify(content)); 
-            for (let key in arr){
-                if(arr.hasOwnProperty(key)){
-                    let question = arr[key];
-
-                    let tr = document.createElement("TR");
-                    let td = document.createElement("TD");
-
-                    tr.id = question.id; td.id = question.id;
-                    td.textContent = question.question;
-
-                    tr.appendChild(td);
-                    results.appendChild(tr);
-                }
-            }
+			console.log(content);
+			let arr = JSON.stringify(content); 
+			for (var i = 0; i < arr.length; i++){
+    var obj = arr[i];
+    for (var key in obj){
+        var attrName = key;
+        var attrValue = obj[key];
+	console.log(attrName);
+    }
+}
+                	/*for (let num in data){
+                       	 	if(data.hasOwnProperty(num)){ // good practice
+                                	let question = data[num];
+                                	console.log(question);
+                        	}
+                	}*/
 			body.appendChild(results);
-		});
+		})
+	
+		
 	}
-
-	function dateCheck(picker){ // ensures min date <= max date
-        let dMin = new Date(document.getElementById("dateMinParam").value.replace("/", "-"));
-        let dMax = new Date(document.getElementById("dateMaxParam").value.replace("/", "-"));
-		if(picker == document.getElementById("dateMinParam") && dMin > dMax) {
+	function dateCheck(event){ // prevents min date parameter from being greater than max date parameter and vice versa
+		let dMin = new Date(document.getElementById("dateMinParam").value);
+		let dMax = new Date(document.getElementById("dateMaxParam").value);
+		if(event.target == document.getElementById("dateMinParam") && dMin > dMax) {
 			document.getElementById("dateMaxParam").value = document.getElementById("dateMinParam").value;
 		}
 		if(dMax < dMin){
 			document.getElementById("dateMinParam").value = document.getElementById("dateMaxParam").value;
 		}
 	}
-
 	function search(offset){ // search button pressed
 		const val = document.getElementById("valueParam").value;
-		const datMin = document.getElementById("dateMinParam").value.replace("/", "-");
-		const datMax = document.getElementById("dateMaxParam").value.replace("/", "-");
+		const datMin = document.getElementById("dateMinParam").value;
+		const datMax = document.getElementById("dateMaxParam").value;
 		const category = document.getElementById("catParam").value;
 		
-		let callURLs = [];
 		let url = "http://jservice.io/api/clues?"
 		.concat("value="+encodeURIComponent(val))
 		.concat("&min_date="+encodeURIComponent(datMin))
 		.concat("&max_date="+encodeURIComponent(datMax));
-		if(offset != null){
-			url = url.concat("&offset="+encodeURIComponent(offset));
-        }
 		if(category in catID){
 			url = url.concat("&category="+encodeURIComponent(catID[category]));
-			callURLs.push(url);
-		} else if(catID !== undefined && catID.length > 0){
-			// multiple possible categories, we'll call all of them
-			for(entry in catID){
-				tempURL = url.concat("&category="+encodeURIComponent(entry));
-				callURLs.push(tempURL);
-			}
+		} else {
+			url = url.concat("&category=0"); // returns nothing
 		}
-		for(entry in callURLs){
-			console.log("Calling API at: "+url);
-			// call jService clues api
-			return fetch(url)
-			.then(response => response.json())
-			.then(content => {
-				return content;
-			})
-			.catch((err) => {
-				console.log(err);
-			})		
-		}		
-	}
+		if(offset != null){
+			url = url.concat("&offset="+encodeURIComponent(offset));
+		}
+		
+		// call api
+		return fetch(url)
+		.then(response => response.json())
+		.then(content => {
+                        console.log(content);
+                     	return content;
+                })
+               	.catch((err) => {
+                      	console.log(err);
+            	})
 
+		//return null;					
+	}
 	function fetchCategories(event){ // call jService search API
 		let dl = document.getElementById("category");
 		while(dl.firstChild){
 			dl.removeChild(dl.firstChild); // clear the datalist in preparation for new elements
 		}
 		catID = {};
+
 		// call search api
 		fetch("http://jservice.io/search?query="+document.getElementById("catParam").value)
 		.then(response => response.text())
 		.then(response => {
+			
 			// web scraping in pure javascript!
 			let html = document.createElement("HTML");
 			html.innerHTML = response;

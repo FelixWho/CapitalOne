@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-		<link rel = "stylesheet" type = "text/css" href = "theme.css" />
     	<title>Create Account</title>
     	<meta charset="utf-8"/>
 </head>
@@ -19,7 +18,10 @@
         	<p>
            		<input type = "submit" value = "Create">
         	</p>
-   	</form>
+   		</form>
+		<form action="login.html">
+			<input type = "submit" value = "Cancel">
+		</form>
 <?php
 if(isset($_POST['username']) && isset($_POST['password'])){
 	require('database.php'); # connect to database
