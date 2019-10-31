@@ -173,9 +173,9 @@ if(isset($_SESSION['username'])){
 			}
 		}
 		for(entry in callURLs){
-			console.log("Calling API at: "+url);
+			console.log("Calling API at: "+entry);
 			// call jService clues api
-			return fetch(url)
+			return fetch(entry)
 			.then(response => response.json())
 			.then(content => {
 				return content;
