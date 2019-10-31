@@ -28,11 +28,9 @@ if(isset($_SESSION['username'])){
 
 <!--search by date-->
 <div>
-<!--<label for="dateMinParam">Minimum Date Aired:</label>-->
 <input type="text" id = "dateMinParam" placeholder="Pick minimum date" readonly>
 </div>
 <div>
-<!--<label for="dateMaxParam">Maximum Date Aired:</label>-->
 <input type="text" id = "dateMaxParam" placeholder="Pick maximum date" readonly>
 </div>
 
@@ -63,6 +61,10 @@ if(isset($_SESSION['username'])){
 
 <input type="submit" id = "search" value="Search">
 
+<div id="results">
+	<!--will populate with search results-->
+</div>
+
 </body>
 <script>
 
@@ -79,6 +81,7 @@ if(isset($_SESSION['username'])){
             dateCheck(this);
         }
     });
+
     $("#dateMaxParam").datepicker({
         yearRange: "1950:+0",
         changeMonth: true,
@@ -88,11 +91,14 @@ if(isset($_SESSION['username'])){
         }
     });
 
+    $("#results").accordion({ header: "h3", collapsible: true, active: false });
+
 	/******
                 GLOBAL VARIABLES
     ******/
 
 	let catID = {}; // dictionary holding category-id pairs
+	let results = {};
 
 	/******
                 EVENT LISTENERS
@@ -109,35 +115,51 @@ if(isset($_SESSION['username'])){
     ******/
 
 	function displayEvents(event, offset){
+		if(!checkCategoryBox()){
+			return;
+		}
+
         // clear table UI
         let tab = document.getElementById("results");
-        if(tab) { tab.remove(); }
-
-		// table to display search results -- should move inside fetch
-		let body = document.getElementById("body");
-		let results = document.createElement("TABLE");
-        results.id = "results";
+        if(tab) { tab.innerHTML=""; }
 
 		search(offset).then(content => {
-			for(ret in content){
-				let arr = JSON.parse(JSON.stringify(ret)); 
-				for (let key in arr){
-					if(arr.hasOwnProperty(key)){
-						let question = arr[key];
 
-						let tr = document.createElement("TR");
-						let td = document.createElement("TD");
+		let arr = JSON.parse(JSON.stringify(content)); 
+		results = arr;
+		for (let key in arr){
+			if(arr.hasOwnProperty(key)){
+				let question = arr[key];
 
-						tr.id = question.id; td.id = question.id;
-						td.textContent = question.question;
+				let que = document.createElement("H3");
+				let ans = document.createElement("DIV");
 
-						tr.appendChild(td);
-						results.appendChild(tr);
-					}
-				}
-				body.appendChild(results);
+				que.id = question.id;
+				que.innerText = question.question;
+				ans.id = question.id;
+				ans.innerHTML = "<p>"+question.answer+"</p>"
+								+ "<p>"+question.airdate+"</p>"
+								+ "<p>Value: "+question.value+"</p>"
+								+ "<p>Category: "+question.category.title+"</p>";
+
+
+				tab.appendChild(que);
+				tab.appendChild(ans);
 			}
+		}
+		$("#results").accordion("refresh");
 		});
+	}
+
+	function checkCategoryBox(){ // helper function that checks if category box has input,
+								 // and if the input is a valid category
+		let box = document.getElementById("catParam");
+		if(box.value.length > 0 && Object.keys(catID).indexOf(box.value) == -1){
+			// user inputted a category that doesn't exist, alert
+			alert("Please input a valid category from the drop-down menu.");
+			return false;
+		}
+		return true;
 	}
 
 	function search(offset){ // search button pressed
@@ -154,46 +176,26 @@ if(isset($_SESSION['username'])){
 		if(offset != null){
 			url = url.concat("&offset="+encodeURIComponent(offset));
         }
-
-		if(catID !== undefined && Object.keys(catID).length > 0){
-			// multiple possible categories that user intends; we'll call all of them
-			for(let entry in catID){
-				if (catID.hasOwnProperty(entry)) { 
-					let tempURL = url.concat("&category="+encodeURIComponent(catID[entry]));
-					callURLs.push(tempURL);
-				}
-			}
-		} else if(Object.keys(catID).indexOf(category) > -1){
-			// there is exactly one specified category
-			let tempURL = url.concat("&category="+encodeURIComponent(catID[category]));
-			callURLs.push(tempURL);
-		} else {
-			// include URL without any category specified
-			callURLs.push(url);
+		if(category in catID){
+			url = url.concat("&category="+encodeURIComponent(catID[category]));
+		} else if(category.length > 0){
+			url = url.concat("&category=0"); // returns nothing
 		}
 
-		console.log("search:");
-		console.log(Object.keys(catID));
-		callURLs.forEach(item => console.log(item));
-		return Promise.all(callURLs.map(u=>fetch(u))).then(responses =>
-    		Promise.all(responses.map(res => res.text()))
-		)
-		/*
-			// call jService clues api
-			return fetch(entry)
-			.then(response => response.json())
-			.then(content => {
-				return content;
-			})
-			.catch((err) => {
-				console.log(err);
-			})		
-			*/
+		// call jService clues api
+		return fetch(url)
+		.then(response => response.json())
+		.then(content => {
+			return content;
+		})
+		.catch((err) => {
+			console.log(err);
+		})		
 	}
 
 	function fetchCategories(event){ // call jService search API
 		// call search api
-		console.log("fetching categories with: "+ "http://jservice.io/search?query="+event.target.value.replace(/ /g,"+"));
+		//console.log("fetching categories with: "+ "http://jservice.io/search?query="+event.target.value.replace(/ /g,"+"));
 		fetch("http://jservice.io/search?query="+event.target.value.replace(/ /g,"+"))
 		.then(response => response.text())
 		.then(response => {
