@@ -68,6 +68,7 @@ if(isset($_SESSION['username'])){
 
     /******
                 jQuery UI elements
+				intended for usage across different web browsers
     ******/
 
     $("#dateMinParam").datepicker({
@@ -104,7 +105,7 @@ if(isset($_SESSION['username'])){
 
 	/******
                 FUNCTIONS
-                (extra functions maybe included as files) 
+                (extra functions may be included as files) 
     ******/
 
 	function displayEvents(event, offset){
@@ -112,40 +113,31 @@ if(isset($_SESSION['username'])){
         let tab = document.getElementById("results");
         if(tab) { tab.remove(); }
 
+		// table to display search results -- should move inside fetch
 		let body = document.getElementById("body");
-		
 		let results = document.createElement("TABLE");
         results.id = "results";
 
 		search(offset).then(content => {
-			let arr = JSON.parse(JSON.stringify(content)); 
-            for (let key in arr){
-                if(arr.hasOwnProperty(key)){
-                    let question = arr[key];
+			for(ret in content){
+				let arr = JSON.parse(JSON.stringify(ret)); 
+				for (let key in arr){
+					if(arr.hasOwnProperty(key)){
+						let question = arr[key];
 
-                    let tr = document.createElement("TR");
-                    let td = document.createElement("TD");
+						let tr = document.createElement("TR");
+						let td = document.createElement("TD");
 
-                    tr.id = question.id; td.id = question.id;
-                    td.textContent = question.question;
+						tr.id = question.id; td.id = question.id;
+						td.textContent = question.question;
 
-                    tr.appendChild(td);
-                    results.appendChild(tr);
-                }
-            }
-			body.appendChild(results);
+						tr.appendChild(td);
+						results.appendChild(tr);
+					}
+				}
+				body.appendChild(results);
+			}
 		});
-	}
-
-	function dateCheck(picker){ // ensures min date <= max date
-        let dMin = new Date(document.getElementById("dateMinParam").value.replace("/", "-"));
-        let dMax = new Date(document.getElementById("dateMaxParam").value.replace("/", "-"));
-		if(picker == document.getElementById("dateMinParam") && dMin > dMax) {
-			document.getElementById("dateMaxParam").value = document.getElementById("dateMinParam").value;
-		}
-		if(dMax < dMin){
-			document.getElementById("dateMinParam").value = document.getElementById("dateMaxParam").value;
-		}
 	}
 
 	function search(offset){ // search button pressed
@@ -162,18 +154,31 @@ if(isset($_SESSION['username'])){
 		if(offset != null){
 			url = url.concat("&offset="+encodeURIComponent(offset));
         }
-		if(category in catID){
-			url = url.concat("&category="+encodeURIComponent(catID[category]));
-			callURLs.push(url);
-		} else if(catID !== undefined && catID.length > 0){
-			// multiple possible categories, we'll call all of them
-			for(entry in catID){
-				tempURL = url.concat("&category="+encodeURIComponent(entry));
-				callURLs.push(tempURL);
+
+		if(catID !== undefined && Object.keys(catID).length > 0){
+			// multiple possible categories that user intends; we'll call all of them
+			for(let entry in catID){
+				if (catID.hasOwnProperty(entry)) { 
+					let tempURL = url.concat("&category="+encodeURIComponent(catID[entry]));
+					callURLs.push(tempURL);
+				}
 			}
+		} else if(Object.keys(catID).indexOf(category) > -1){
+			// there is exactly one specified category
+			let tempURL = url.concat("&category="+encodeURIComponent(catID[category]));
+			callURLs.push(tempURL);
+		} else {
+			// include URL without any category specified
+			callURLs.push(url);
 		}
-		for(entry in callURLs){
-			console.log("Calling API at: "+entry);
+
+		console.log("search:");
+		console.log(Object.keys(catID));
+		callURLs.forEach(item => console.log(item));
+		return Promise.all(callURLs.map(u=>fetch(u))).then(responses =>
+    		Promise.all(responses.map(res => res.text()))
+		)
+		/*
 			// call jService clues api
 			return fetch(entry)
 			.then(response => response.json())
@@ -183,25 +188,27 @@ if(isset($_SESSION['username'])){
 			.catch((err) => {
 				console.log(err);
 			})		
-		}		
+			*/
 	}
 
 	function fetchCategories(event){ // call jService search API
-		let dl = document.getElementById("category");
-		while(dl.firstChild){
-			dl.removeChild(dl.firstChild); // clear the datalist in preparation for new elements
-		}
-		catID = {};
 		// call search api
-		fetch("http://jservice.io/search?query="+document.getElementById("catParam").value)
+		console.log("fetching categories with: "+ "http://jservice.io/search?query="+event.target.value.replace(/ /g,"+"));
+		fetch("http://jservice.io/search?query="+event.target.value.replace(/ /g,"+"))
 		.then(response => response.text())
 		.then(response => {
-			// web scraping in pure javascript!
+			let dl = document.getElementById("category");
+			while(dl.firstChild){
+				dl.removeChild(dl.firstChild); // clear the datalist in preparation for new elements
+			}
+			catID = {};
+			
+			// web scraping in pure javascript using small trick :D
 			let html = document.createElement("HTML");
-			html.innerHTML = response;
+			html.innerHTML = response; // place web html data into DOM object
 			let table = html.getElementsByTagName("tbody")[0];
 			let rows = table.children;
-			for(let i = 0; i < rows.length; i++){
+			for(let i = 0; i < rows.length; i++){ // traverse DOM
 				let txt = rows[i].children[0].children[0].textContent;
 				let id = rows[i].children[0].children[0].getAttribute("href").substring(9);	
 			
@@ -211,7 +218,21 @@ if(isset($_SESSION['username'])){
 				item.value = rows[i].children[0].children[0].textContent;
 				dl.appendChild(item);
 			}
+		})
+		.catch((err) => {
+			console.log(err); // good practice
 		});
+	}
+
+	function dateCheck(picker){ // ensures min date <= max date
+        let dMin = new Date(document.getElementById("dateMinParam").value.replace("/", "-"));
+        let dMax = new Date(document.getElementById("dateMaxParam").value.replace("/", "-"));
+		if(picker == document.getElementById("dateMinParam") && dMin > dMax) {
+			document.getElementById("dateMaxParam").value = document.getElementById("dateMinParam").value;
+		}
+		if(dMax < dMin){
+			document.getElementById("dateMinParam").value = document.getElementById("dateMaxParam").value;
+		}
 	}
 	
 	
