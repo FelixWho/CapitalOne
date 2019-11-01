@@ -34,6 +34,10 @@ if(isset($_SESSION['username'])){
 <input type="text" id = "dateMaxParam" placeholder="Pick maximum date" readonly>
 </div>
 
+<div>
+<input type="submit" id="clearDate" value="Clear Dates">
+</div>
+
 <!--search by difficulty value-->
 <div>
 <label for="valueParam">Difficulty:</label>
@@ -108,6 +112,7 @@ if(isset($_SESSION['username'])){
 	document.getElementById("dateMinParam").addEventListener("change", dateCheck, false);
 	document.getElementById("dateMaxParam").addEventListener("change", dateCheck, false);
 	document.getElementById("catParam").addEventListener("input", fetchCategories, false);
+	document.getElementById("clearDate").addEventListener("click", clearDate, false);
 
 	/******
                 FUNCTIONS
@@ -137,11 +142,10 @@ if(isset($_SESSION['username'])){
 				que.id = question.id;
 				que.innerText = question.question;
 				ans.id = question.id;
-				ans.innerHTML = "<p>"+question.answer+"</p>"
-								+ "<p>"+question.airdate+"</p>"
+				ans.innerHTML = "<p>Answer: "+question.answer+"</p>"
+								+ "<p>Date Aired: "+new Date(question.airdate).toLocaleDateString("en-US")+"</p>"
 								+ "<p>Value: "+question.value+"</p>"
 								+ "<p>Category: "+question.category.title+"</p>";
-
 
 				tab.appendChild(que);
 				tab.appendChild(ans);
@@ -222,19 +226,37 @@ if(isset($_SESSION['username'])){
 			}
 		})
 		.catch((err) => {
-			console.log(err); // good practice
+			console.log(err);
 		});
 	}
 
-	function dateCheck(picker){ // ensures min date <= max date
-        let dMin = new Date(document.getElementById("dateMinParam").value.replace("/", "-"));
-        let dMax = new Date(document.getElementById("dateMaxParam").value.replace("/", "-"));
-		if(picker == document.getElementById("dateMinParam") && dMin > dMax) {
-			document.getElementById("dateMaxParam").value = document.getElementById("dateMinParam").value;
+	function clearDate(event){ // clear date inputs
+		let dates = $("input[id$='dateMinParam'], input[id$='dateMaxParam']");
+		dates.attr('value', '');
+    	dates.each(function(){
+        	$.datepicker._clearDate(this);
+    	});
+	}
+
+	function dateCheck(event){ // ensures min date <= max date
+		let in1 = document.getElementById("dateMinParam").value;
+		let in2 = document.getElementById("dateMaxParam").value;
+        let dMin = new Date(in1.replace("/", "-"));
+        let dMax = new Date(in2.replace("/", "-"));
+		if(event == document.getElementById("dateMinParam") && dMin > dMax) {
+			document.getElementById("dateMaxParam").value = in1;
 		}
 		if(dMax < dMin){
-			document.getElementById("dateMinParam").value = document.getElementById("dateMaxParam").value;
+			document.getElementById("dateMinParam").value = in2;
 		}
+		// GOTTA WORK ON THIS--> if selected date in one box and other box empty, fill other box
+		if(event == document.getElementById("dateMinParam") && (in2 == null || in2 == "")){
+			document.getElementById("dateMaxParam").value = in1;
+		}
+		if(event == document.getElementById("dateMaxParam") && (in1 == null || in1 == "")){
+			document.getElementById("dateMinParam").value = in2;
+		}
+		
 	}
 	
 	
