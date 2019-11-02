@@ -103,7 +103,6 @@ if(isset($_SESSION['username'])){
 
 	let catID = {}; // dictionary holding category-id pairs
 	let results = {}; // dictionary holding parsed api results
-	let page = 0;
 
 	/******
                 EVENT LISTENERS
@@ -125,9 +124,6 @@ if(isset($_SESSION['username'])){
 			return;
 		}
 
-		page = 0; // set page to default 0
-		page = offset; // but if offset != 0, set page to offset
-
         // clear table UI
         let tab = document.getElementById("results");
         if(tab) { tab.innerHTML=""; }
@@ -137,16 +133,14 @@ if(isset($_SESSION['username'])){
 
 		getSearch(offset+100)
 		.then(content => {
-			console.log("this"+(offset+100));
-			if(Object.entries(content).length === 0 && content.constructor === Object){
+			if(Object.entries(content).length === 0){
 				console.log("No further pages");
 			} else {
 				console.log("There is another page");
 				let nextPage = document.createElement("input");
 				nextPage.type = "submit"; nextPage.value="Next Page"; nextPage.id = "nextPage";
 				nextPage.addEventListener("click", function(event){
-					
-					displayEvents(page+100);
+					displayEvents(offset+100);
 				},false,);
 				insertAfter(nextPage, document.getElementById("results"));
 			}
@@ -185,11 +179,23 @@ if(isset($_SESSION['username'])){
 						}
 					}
 					let favoriteButton = document.createElement("input");
-					favoriteButton.type = "submit";
+					favoriteButton.type = "submit"; favoriteButton.name = question.id;
 					if(isFav){
 				 		favoriteButton.value = "Unfavorite";
+						favoriteButton.addEventListener("click", function listen(event){
+							event.target.value="Favorite";
+							removeFavorite(event);
+							event.target.removeEventListener("click", listen);
+							event.target.addEventListener("click", addFavorite, false);
+						}, false);
 					} else {
 						favoriteButton.value = "Favorite";
+						favoriteButton.addEventListener("click", function listen(event){
+							event.target.value="Unfavorite";
+							addFavorite(event);
+							event.target.removeEventListener("click", listen);
+							event.target.addEventListener("click", removeFavorite, false);
+						}, false);
 					}
 					ans.appendChild(favoriteButton);
 				}
@@ -200,6 +206,34 @@ if(isset($_SESSION['username'])){
 		}
 		$("#results").accordion("refresh");
 		});
+	}
+
+	function addFavorite(event){
+		let name = event.target.name;
+		for(let key in results){
+			if(results.hasOwnProperty(key)){
+				let question = results[key];
+				if(question.id == name){
+					// match, add to favorite
+					let eventObject = {
+					"username": <?php if(isset($_SESSION['username'])) {echo json_encode($_SESSION['username']);} else echo "-1"; ?>, 
+					"id": (!question.id ? -1 : question.id ), 
+					"question": (!question.question ? "" : question.question ),
+					"answer": (!question.answer ? "" : question.answer ),
+					"category": (!question.category.title ? "" : question.category.title ),
+					"date_aired": (!question.airdate ? "" : new Date(question.airdate).toSQLFormat()) };
+					fetch("add_favorite.php", {
+						method: 'POST',
+						body: JSON.stringify(eventObject),
+						headers: { 'content-type': 'application/json' }
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+				}
+			}
+		}
+
 	}
 
 	function checkCategoryBox(){ // helper function that checks if category box has input,
@@ -244,7 +278,6 @@ if(isset($_SESSION['username'])){
 		.concat("value="+encodeURIComponent(val))
 		.concat("&min_date="+encodeURIComponent(datMin))
 		.concat("&max_date="+encodeURIComponent(datMax));
-		console.log("calling for offset:" +offset);
 		if(offset != null){
 			url = url.concat("&offset="+encodeURIComponent(offset));
         }
@@ -306,6 +339,19 @@ if(isset($_SESSION['username'])){
     	});
 	}
 
+	function twoDigits(d) {
+		// source: https://stackoverflow.com/questions/5129624/convert-js-date-time-to-mysql-datetime
+    	if(0 <= d && d < 10) return "0" + d.toString();
+    	if(-10 < d && d < 0) return "-0" + (-1*d).toString();
+    	return d.toString();
+	}
+
+	Date.prototype.toSQLFormat = function() {
+		// convert JS Date type to MySQL date format
+		// source: https://stackoverflow.com/questions/5129624/convert-js-date-time-to-mysql-datetime
+    	return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate());
+	};
+
 	function dateCheck(event){ // ensures min date <= max date
 		let in1 = document.getElementById("dateMinParam").value;
 		let in2 = document.getElementById("dateMaxParam").value;
@@ -329,7 +375,7 @@ if(isset($_SESSION['username'])){
 	}
 
 	function insertAfter(newNode, referenceNode) {
-		// credit: https://stackoverflow.com/questions/4793604/how-to-insert-an-element-after-another-element-in-javascript-without-using-a-lib
+		// source: https://stackoverflow.com/questions/4793604/how-to-insert-an-element-after-another-element-in-javascript-without-using-a-lib
     	referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 	}
 	

@@ -9,25 +9,25 @@ $json_obj = json_decode($json_str, true); // store data in associative array
 
 if(isset($json_obj["username"])){ // if signed in, proceed
     $name = $json_obj["username"];
-    $command = $mysqli->prepare("SELECT q_id FROM favorites WHERE username=?");
+    $id = $json_obj["id"];
+    $question = $json_obj["question"];
+    $answer = $json_obj["answer"];
+    $category = $json_obj["category"];
+    $date = $json_obj["date_aired"];
+    $command = $mysqli->prepare("INSERT INTO favorites (username, q_id, question, answer, category, date_aired) VALUES (?,?,?,?,?,?)");
     if(!$command){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
     }
 
-    $command->bind_param('s', $name);
+    $command->bind_param('ssssss', $name, $id, $question, $answer, $category, $date);
     $command->execute();
-    $result = $command->get_result();
-
-    while($row = $result->fetch_assoc()){
-        $ret[] = $row;
-    }   
-
-        echo json_encode(array(
-            "success" => true
-        ));
-
     $command->close();
+
+    echo json_encode(array(
+        "success" => true
+    ));
+
 } else {
     echo json_encode(array(
         "success" => false
