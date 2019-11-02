@@ -4,7 +4,6 @@
     <title>Jeopardy Search Engine</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!--include jQuery-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -17,12 +16,13 @@ if(isset($_SESSION['username'])){
 	# logged in
 	echo "<div><form action = 'logout.php'>";
    	echo "<input type='submit' value='Log Out' name='Logout'/>";
-        echo "</form></div>";
+	echo "</form></div>";
+	printf("<div>Logged in as: %s </div>", htmlentities($_SESSION['username']));
 } else {
 	# not logged in
 	echo "<div><form action = 'login.html'>";
-        echo "<input type='submit' value='Log In' name='Login'/>";
-        echo "</form></div>";
+    echo "<input type='submit' value='Log In' name='Login'/>";
+    echo "</form></div>";
 }
 ?>
 
@@ -102,7 +102,8 @@ if(isset($_SESSION['username'])){
     ******/
 
 	let catID = {}; // dictionary holding category-id pairs
-	let results = {};
+	let results = {}; // dictionary holding parsed api results
+	let page = 0;
 
 	/******
                 EVENT LISTENERS
@@ -119,22 +120,48 @@ if(isset($_SESSION['username'])){
                 (extra functions may be included as files) 
     ******/
 
-	function displayEvents(event, offset){
+	function displayEvents(offset){
 		if(!checkCategoryBox()){
 			return;
 		}
 
+		page = 0; // set page to default 0
+		page = offset; // but if offset != 0, set page to offset
+
         // clear table UI
         let tab = document.getElementById("results");
         if(tab) { tab.innerHTML=""; }
+		if(document.getElementById("nextPage")){
+			document.getElementById("nextPage").remove();
+		}
 
-		search(offset).then(content => {
+		getSearch(offset+100)
+		.then(content => {
+			console.log("this"+(offset+100));
+			if(Object.entries(content).length === 0 && content.constructor === Object){
+				console.log("No further pages");
+			} else {
+				console.log("There is another page");
+				let nextPage = document.createElement("input");
+				nextPage.type = "submit"; nextPage.value="Next Page"; nextPage.id = "nextPage";
+				nextPage.addEventListener("click", function(event){
+					
+					displayEvents(page+100);
+				},false,);
+				insertAfter(nextPage, document.getElementById("results"));
+			}
+		});
 
-		let arr = JSON.parse(JSON.stringify(content)); 
-		results = arr;
-		for (let key in arr){
-			if(arr.hasOwnProperty(key)){
-				let question = arr[key];
+		getSearchAndFav(offset).then(([favResults, searchResults]) => {
+
+		let favList = JSON.parse(JSON.stringify(favResults)); 
+		let parsedResults = JSON.parse(JSON.stringify(searchResults)); 
+
+		results = parsedResults;
+		let loggedIn = <?php if(isset($_SESSION['username'])) {echo "1";} else {echo "0";} ?>;
+		for (let key1 in parsedResults){
+			if(parsedResults.hasOwnProperty(key1)){
+				let question = parsedResults[key1];
 
 				let que = document.createElement("H3");
 				let ans = document.createElement("DIV");
@@ -142,10 +169,30 @@ if(isset($_SESSION['username'])){
 				que.id = question.id;
 				que.innerText = question.question;
 				ans.id = question.id;
-				ans.innerHTML = "<p>Answer: "+question.answer+"</p>"
+				ans.innerHTML = "<p>Answer: What is "+question.answer+"</p>"
 								+ "<p>Date Aired: "+new Date(question.airdate).toLocaleDateString("en-US")+"</p>"
 								+ "<p>Value: "+question.value+"</p>"
 								+ "<p>Category: "+question.category.title+"</p>";
+				
+				if(loggedIn == "1") { // add favorite/unfavorite buttons
+					let isFav = false;
+					for(let key2 in favList){ // check if current question is favorited
+						if(favList.hasOwnProperty(key2)){
+							let q_id = favList[key2].q_id;
+							if(q_id == que.id){
+								isFav = true;
+							}
+						}
+					}
+					let favoriteButton = document.createElement("input");
+					favoriteButton.type = "submit";
+					if(isFav){
+				 		favoriteButton.value = "Unfavorite";
+					} else {
+						favoriteButton.value = "Favorite";
+					}
+					ans.appendChild(favoriteButton);
+				}
 
 				tab.appendChild(que);
 				tab.appendChild(ans);
@@ -166,7 +213,27 @@ if(isset($_SESSION['username'])){
 		return true;
 	}
 
-	function search(offset){ // search button pressed
+	function getSearchAndFav(offset = 0){
+		return Promise.all([getFav(), getSearch(offset)]);
+	}
+
+	function getFav(event){
+		let loggedIn = <?php if(isset($_SESSION['username'])) {echo "1";} else {echo "0";} ?>;
+		let eventObject;
+		if(loggedIn == "1"){
+			eventObject = {"username": <?php if(isset($_SESSION['username'])) {echo json_encode($_SESSION['username']);} else echo "-1"; ?> };
+		} else {
+			eventObject = {};
+		}
+		return fetch("is_favorite.php", {
+			method: 'POST',
+			body: JSON.stringify(eventObject),
+			headers: { 'content-type': 'application/json' }
+		})
+		.then(response => response.json());
+	}
+
+	function getSearch(offset){ // search button pressed
 		const val = document.getElementById("valueParam").value;
 		const datMin = document.getElementById("dateMinParam").value.replace("/", "-");
 		const datMax = document.getElementById("dateMaxParam").value.replace("/", "-");
@@ -177,6 +244,7 @@ if(isset($_SESSION['username'])){
 		.concat("value="+encodeURIComponent(val))
 		.concat("&min_date="+encodeURIComponent(datMin))
 		.concat("&max_date="+encodeURIComponent(datMax));
+		console.log("calling for offset:" +offset);
 		if(offset != null){
 			url = url.concat("&offset="+encodeURIComponent(offset));
         }
@@ -249,7 +317,8 @@ if(isset($_SESSION['username'])){
 		if(dMax < dMin){
 			document.getElementById("dateMinParam").value = in2;
 		}
-		// GOTTA WORK ON THIS--> if selected date in one box and other box empty, fill other box
+
+		// fill in other field if empty
 		if(event == document.getElementById("dateMinParam") && (in2 == null || in2 == "")){
 			document.getElementById("dateMaxParam").value = in1;
 		}
@@ -257,6 +326,11 @@ if(isset($_SESSION['username'])){
 			document.getElementById("dateMinParam").value = in2;
 		}
 		
+	}
+
+	function insertAfter(newNode, referenceNode) {
+		// credit: https://stackoverflow.com/questions/4793604/how-to-insert-an-element-after-another-element-in-javascript-without-using-a-lib
+    	referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 	}
 	
 	

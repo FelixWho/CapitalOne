@@ -3,6 +3,11 @@ if(isset($_POST['username'])){
     	$name = (string)$_POST['username'];
     	require('database.php'); # connect to database
     	$command = $mysqli->prepare("SELECT COUNT(*), username, password FROM users WHERE username=?");
+
+	if(!$command){
+        	printf("Query Prep Failed: %s\n", $mysqli->error);
+        	exit;
+    	}	
 	
 	# fetch password hash
     	$command->bind_param('s', $name);
@@ -15,7 +20,6 @@ if(isset($_POST['username'])){
     	if($cnt == 1 && password_verify($pwd_entry, $pwd_hash)){
         	session_start();
         	$_SESSION['username'] = $username;
-		$_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32)); // CSRF token, best security practices
 		header("Location: search.php"); // redirect: login success
 		exit;
     	} else{
