@@ -14,9 +14,14 @@
 session_start();
 if(isset($_SESSION['username'])){
 	# logged in
-	echo "<div><form action = 'logout.php'>";
-   	echo "<input type='submit' value='Log Out' name='Logout'/>";
-	echo "</form></div>";
+	echo "<div>";
+	echo 	"<form action = 'view_favorites.php'>";
+	echo 		"<input type='submit' value='Favorites' name='Favorites'/>";
+	echo 	"</form>";
+	echo 	"<form action = 'logout.php'>";
+   	echo 		"<input type='submit' value='Log Out' name='Logout'/>";
+	echo 	"</form>";
+	echo "</div>";
 	printf("<div>Logged in as: %s </div>", htmlentities($_SESSION['username']));
 } else {
 	# not logged in
@@ -131,6 +136,7 @@ if(isset($_SESSION['username'])){
 			document.getElementById("nextPage").remove();
 		}
 
+		// check if there is another page, if so add "next page" button
 		getSearch(offset+100)
 		.then(content => {
 			if(Object.entries(content).length === 0){
@@ -197,7 +203,6 @@ if(isset($_SESSION['username'])){
 					}
 					ans.appendChild(favoriteButton);
 				}
-
 				tab.appendChild(que);
 				tab.appendChild(ans);
 			}
@@ -235,8 +240,7 @@ if(isset($_SESSION['username'])){
 	function deleteFavorite(event){
 		let name = event.target.name;
 		let eventObject = {
-			"id": name,
-			"username": <?php if(isset($_SESSION['username'])) {echo json_encode($_SESSION['username']);} else echo "-1"; ?>
+			"id": name
 		}
 		fetch("delete_favorite.php", {
 			method: 'POST',
@@ -256,7 +260,6 @@ if(isset($_SESSION['username'])){
 				if(question.id == name){
 					// matched the search result; add to favorite
 					let eventObject = {
-					"username": <?php if(isset($_SESSION['username'])) {echo json_encode($_SESSION['username']);} else echo "-1"; ?>, 
 					"id": (!question.id ? -1 : question.id ), 
 					"question": (!question.question ? "" : question.question ),
 					"answer": (!question.answer ? "" : question.answer ),
