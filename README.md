@@ -18,7 +18,7 @@ PHP, Javascript, HTML, CSS, JQuery, MySQL
 
 ### Website
 
-Hosted on Amazon Web Services (AWS): http://ec2-3-19-227-64.us-east-2.compute.amazonaws.com/~felixhu/CapitalOne/search.php
+Hosted on Amazon Web Services's free micro instance (AWS): http://ec2-3-19-227-64.us-east-2.compute.amazonaws.com/~felixhu/CapitalOne/search.php
 
 ### Notice
 
