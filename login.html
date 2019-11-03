@@ -3,23 +3,32 @@
 <head>
      	<title>Jeopardy Search Login</title>
      	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="theme.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
     	<header>
-        	<h1>LOGIN</h1>
+        	<!--<h1>LOGIN</h1>-->
     	</header>
+	<div class="container4">
 	<!--log in-->
     	<form action="login_redirect.php" method="POST">
-            	<p><label>Username: </label> <input type="text" name="username"  id="username" required/></p>
-	     	<p><label>Password: </label> <input type="text" name="password" id="password" required /></p>
-	<p><input type = "submit" value = "login"></p>
+            	<p><input placeholder="Username" type="text" name="username"  id="username" required/></p>
+	     	<p><input placeholder="Password" type="text" name="password" id="password" required /></p>
+	<p><input type = "submit" value = "Log in" id = "login"></p>
 	<!-- create new user-->
     	</form>
     	<form action = "new_user.php">
-		<p><input type = "submit" value = "Create Account"></p>
+		<p><input type = "submit" value = "Create account" id="create"></p>
     	</form>
 	<form action = "search.php">
-                <p><input type = "submit" value = "Continue Without Logging In"></p>
+                <p><input type = "submit" value = "Continue without logging in" id="continue"></p>
         </form>
+	</div>
 </body>
+<script>
+	$("#create, #continue, #login").button();
+</script>
 </html>

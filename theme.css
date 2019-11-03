@@ -13,7 +13,7 @@ body {
     justify-content:flex-end;
 
 }
-.container2{ display:flex;
+.container2{
     justify-content:center;
     display: flex;
     -moz-box-sizing: content-box; 
@@ -22,9 +22,20 @@ body {
     padding: 25px;
     padding-bottom: 5px;
 }
-.container3{ display:flex;
+.container3{
     justify-content:center;
     display: flex;
+    -moz-box-sizing: content-box; 
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+}
+.container4{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
     -moz-box-sizing: content-box; 
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
@@ -38,7 +49,7 @@ body {
     border: 0;
     -webkit-appearance: none;
 }
-#login,#valueParam,#logout,#fav,#back,#catParam  {
+#login,#valueParam,#logout,#fav,#back,#catParam, #create, #continue, #username, #password  {
     display: inline-block;
     padding: 10px 15px;
     font-size: 20px;
@@ -60,7 +71,7 @@ body {
 /*Impossible to be foolproof, but trying to optimize for different screen sizes*/
 /*source for size reference: https://stackoverflow.com/questions/6370690/media-queries-how-to-target-desktop-tablet-and-mobile*/
 @media (min-width:320px) { 
-    #login,#valueParam,#logout,#fav,#back,#catParam  {
+    #login,#valueParam,#logout,#fav,#back,#catParam,#create, #continue, #username, #password   {
         display: inline-block;
         padding: 10px 15px;
         font-size: 10px;
@@ -85,7 +96,7 @@ body {
     }
 }
 @media (min-width:481px){ 
-    #login,#valueParam,#logout,#fav,#back,#catParam  {
+    #login,#valueParam,#logout,#fav,#back,#catParam,#create, #continue, #username, #password   {
         display: inline-block;
         padding: 10px 15px;
         font-size: 12px;
@@ -110,7 +121,7 @@ body {
     }
 }
 @media (min-width:641px) {
-    #login,#valueParam,#logout,#fav,#back,#catParam  {
+    #login,#valueParam,#logout,#fav,#back,#catParam,#create, #continue, #username, #password   {
         display: inline-block;
         padding: 10px 15px;
         font-size: 15px;
@@ -135,7 +146,7 @@ body {
     }
 }
 @media (min-width:961px)  {
-    #login,#valueParam,#logout,#fav,#back,#catParam  {
+    #login,#valueParam,#logout,#fav,#back,#catParam,#create, #continue, #username, #password   {
         display: inline-block;
         padding: 10px 15px;
         font-size: 20px;
@@ -160,7 +171,7 @@ body {
     }
 }
 @media (min-width:1025px) {
-    #login,#valueParam,#logout,#fav,#back,#catParam  {
+    #login,#valueParam,#logout,#fav,#back,#catParam,#create, #continue, #username, #password   {
         display: inline-block;
         padding: 10px 15px;
         font-size: 20px;
@@ -185,7 +196,7 @@ body {
     }
 }
 @media (min-width:1281px) {
-    #login,#valueParam,#logout,#fav,#back,#catParam  {
+    #login,#valueParam,#logout,#fav,#back,#catParam,#create, #continue, #username, #password   {
         display: inline-block;
         padding: 10px 15px;
         font-size: 20px;
