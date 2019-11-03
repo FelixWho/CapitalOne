@@ -15,61 +15,65 @@
 session_start();
 if(isset($_SESSION['username'])){
 	# logged in
-	echo "<div>";
-	echo 	"<form action = 'view_favorites.php'>";
-	echo 		"<input type='submit' value='Favorites' id='fav'/>";
-	echo 	"</form>";
-	echo 	"<form action = 'logout.php'>";
-   	echo 		"<input type='submit' value='Log Out' id = 'logout'/>";
-	echo 	"</form>";
+	echo "<div class='container'>";
+	echo 	"<div class = 'align-left'>";
+	echo 		"<form action = 'view_favorites.php'>";
+	echo 			"<input type='submit' value='Favorites' id='fav'/>";
+	echo 		"</form>";
+	echo	"</div>";
+	echo	"<div class = 'align-right'>";
+	echo 		"<form action = 'logout.php'>";
+    printf("<input type='submit' value='Log out %s' id='logout'>", htmlentities($_SESSION['username']));
+	echo 		"</form>";
+	echo 	"</div>";
 	echo "</div>";
-	printf("<div>Logged in as: %s </div>", htmlentities($_SESSION['username']));
 } else {
 	# not logged in
 	echo "<div><form action = 'login.html'>";
-    echo "<input type='submit' value='Log In' id='login'/>";
+    echo 	"<input type='submit' value='Log in' id='login'/>";
     echo "</form></div>";
 }
 ?>
+<div class="container2">
+	<!--search by date-->
+	<div>
+	<input type="text" id = "dateMinParam" placeholder="Minimum air date" readonly>
+	</div>
+	<div>
+	<input type="text" id = "dateMaxParam" placeholder="Maximum air date" readonly>
+	</div>
 
-<!--search by date-->
-<div>
-<input type="text" id = "dateMinParam" placeholder="Pick minimum date" readonly>
-</div>
-<div>
-<input type="text" id = "dateMaxParam" placeholder="Pick maximum date" readonly>
-</div>
+	<div>
+	<input type="submit" id="clearDate" value="Clear dates">
+	</div>
 
-<div>
-<input type="submit" id="clearDate" value="Clear Dates">
-</div>
+	<!--search by difficulty value-->
+	<div>
+		<input list="values" id = "valueParam" placeholder="Difficulty">
+		<datalist id="values">
+			<option value="100">
+			<option value="200">
+			<option value="300">
+			<option value="400">
+			<option value="500">
+			<option value="600">
+			<option value="800">
+			<option value="1000">
+		</datalist>
+	</div>
 
-<!--search by difficulty value-->
-<div>
-<label for="valueParam">Difficulty:</label>
-<input list="values" id = "valueParam">
-<datalist id="values">
- 	<option value="100">
-  	<option value="200">
-  	<option value="300">
-  	<option value="400">
-	<option value="500">
-	<option value="600">
-	<option value="800">
-	<option value="1000">
-</datalist>
-</div>
+	<!--search by category-->
+	<div>
+	<input list="category" id = "catParam" placeholder="Category">
+	<datalist id="category">
+		<!--will populate with javascript + webscraping-->
+	</datalist>
+	</div>
 
-<!--search by category-->
-<div>
-<label for="catParam">Category:</label>
-<input list="category" id = "catParam">
-<datalist id="category">
-	<!--will populate with javascript + webscraping-->
-</datalist>
+	<div style="text-align:center;">
+		<input type="submit" id = "search" value="Search">
+	</div>
 </div>
-
-<input type="submit" id = "search" value="Search">
 
 <div id="results">
 	<!--will populate with search results-->
@@ -152,6 +156,7 @@ if(isset($_SESSION['username'])){
 					displayEvents(offset+100);
 				},false,);
 				insertAfter(nextPage, document.getElementById("results"));
+				$("#nextPage").button();
 			}
 		});
 
@@ -287,7 +292,7 @@ if(isset($_SESSION['username'])){
 		let box = document.getElementById("catParam");
 		if(box.value.length > 0 && Object.keys(catID).indexOf(box.value) == -1){
 			// user inputted a category that doesn't exist, alert
-			alert("Please input a valid category from the drop-down menu.");
+			alert("Please input a valid category or select a category from the drop-down menu (non-mobile only).");
 			return false;
 		}
 		return true;

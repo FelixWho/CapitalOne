@@ -1,14 +1,44 @@
 body {
-	font-family: Arial, Helvetica, sans-serif;
-}
-* { 
--moz-box-sizing: border-box; 
--webkit-box-sizing: border-box; 
-box-sizing: border-box;
+    font-family: 'Roboto', sans-serif, Helvetica;
 }
 .ui-accordion .ui-accordion-header {
-cursor: pointer;
-position: relative;
-margin-top: 100px;
-zoom: 1;
+    cursor: pointer;
+    position: relative;
+    margin-top: 100px;
+    zoom: 1;
 }
+.container{ display:flex;
+    justify-content:flex-end;
+}
+.container2{ display:flex;
+    justify-content:center;
+    display: flex;
+    -moz-box-sizing: content-box; /* or `border-box` */
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    padding: 50px;
+}
+#search {
+    background-color: #0073ff;
+    color: white;
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 20px;
+    border: 0;
+    -webkit-appearance: none;
+}
+#login,#valueParam,#logout,#fav,#back,#catParam,#clearDate, #dateMinParam, #dateMaxParam  {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 20px;
+    border:0;
+    -webkit-appearance: none;
+}
+/*Firefox is a bit weird sometimes with rendering*/
+.submit::-moz-focus-inner { 
+    border: 0;
+}
+
+/*.align-left{ float: left; width:50%; }
+.align-right{ float: right; width:50%; }
+*/

@@ -12,31 +12,40 @@
 <body id="body">
 <?php
 session_start();
-echo "<div>";
-echo 	"<form action = 'search.php'>";
-echo 		"<input type='submit' value='Back'/>";
-echo 	"</form>";
-echo "</div>";
 if(isset($_SESSION['username'])){
-	# logged in
-	echo "<div>";
-	echo 	"<form action = 'logout.php'>";
-   	echo 		"<input type='submit' value='Log Out' name='Logout'/>";
-    echo 	"</form>";
+    # logged in
+    echo "<div class='container'>";
+    echo    "<div>";
+    echo 	    "<form action = 'search.php'>";
+    echo 		    "<input type='submit' value='Back' id='back'/>";
+    echo 	    "</form>";
+    echo    "</div>";
+	echo    "<div>";
+	echo 	    "<form action = 'logout.php'>";
+    printf("<input type='submit' value='Log out %s' id='logout'>", htmlentities($_SESSION['username']));
+    echo 	    "</form>";
     echo "</div>";
-	printf("<div>Logged in as: %s </div>", htmlentities($_SESSION['username']));
 } else {
-	# not logged in
-	echo "<div><form action = 'login.html'>";
-    echo "<input type='submit' value='Log In' name='Login'/>";
+    # not logged in
+    echo "<div class='container'>";
+    echo    "<div>";
+    echo 	    "<form action = 'search.php'>";
+    echo 		    "<input type='submit' value='Back' id='back'/>";
+    echo 	    "</form>";
+    echo    "</div>";
+	echo    "<div><form action = 'login.html'>";
+    echo    "<input type='submit' value='Log in' id='login'/>";
     echo "</form></div>";
 }
+echo "</div>";
 ?>
 
 <div id="results">
 	<!--will populate with favorites table-->
 </div>
 <script>
+    $("#back, #logout, #login").button();
+
     $("#results").accordion({ header: "h3", collapsible: true, active: false });
 
     document.addEventListener("DOMContentLoaded", displayFavorites, false);
