@@ -4,6 +4,7 @@
     <title>Jeopardy Search Engine</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="theme.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -16,17 +17,17 @@ if(isset($_SESSION['username'])){
 	# logged in
 	echo "<div>";
 	echo 	"<form action = 'view_favorites.php'>";
-	echo 		"<input type='submit' value='Favorites' name='Favorites'/>";
+	echo 		"<input type='submit' value='Favorites' id='fav'/>";
 	echo 	"</form>";
 	echo 	"<form action = 'logout.php'>";
-   	echo 		"<input type='submit' value='Log Out' name='Logout'/>";
+   	echo 		"<input type='submit' value='Log Out' id = 'logout'/>";
 	echo 	"</form>";
 	echo "</div>";
 	printf("<div>Logged in as: %s </div>", htmlentities($_SESSION['username']));
 } else {
 	# not logged in
 	echo "<div><form action = 'login.html'>";
-    echo "<input type='submit' value='Log In' name='Login'/>";
+    echo "<input type='submit' value='Log In' id='login'/>";
     echo "</form></div>";
 }
 ?>
@@ -99,6 +100,8 @@ if(isset($_SESSION['username'])){
             dateCheck(this);
         }
     });
+
+	$("#fav, #logout, #clearDate, #search, #login").button();
 
     $("#results").accordion({ header: "h3", collapsible: true, active: false });
 

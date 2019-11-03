@@ -4,6 +4,7 @@
     <title>Favorite Questions</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="theme.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -13,7 +14,7 @@
 session_start();
 echo "<div>";
 echo 	"<form action = 'search.php'>";
-echo 		"<input type='submit' value='Back' name='Back'/>";
+echo 		"<input type='submit' value='Back'/>";
 echo 	"</form>";
 echo "</div>";
 if(isset($_SESSION['username'])){
