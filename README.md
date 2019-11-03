@@ -16,6 +16,10 @@ PHP, Javascript, HTML, CSS, JQuery, MySQL
   - This was done through web scraping in pure Javascriipt
 - Inspired by flat UI
 
+### Website
+
+Hosted on Amazon Web Services (AWS): http://ec2-3-19-227-64.us-east-2.compute.amazonaws.com/~felixhu/CapitalOne/search.php
+
 ### Notice
 
 Searching, loading the game board simulation, and the category refiner may experience some latency due to calling for large amounts of data from the jService API.
