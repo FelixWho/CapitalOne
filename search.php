@@ -184,17 +184,15 @@ if(isset($_SESSION['username'])){
 				 		favoriteButton.value = "Unfavorite";
 						favoriteButton.addEventListener("click", function listen(event){
 							event.target.value="Favorite";
-							removeFavorite(event);
-							event.target.removeEventListener("click", listen);
-							event.target.addEventListener("click", addFavorite, false);
+							deleteFavorite(event);
+							changeButtonToFavoriteButton(event);
 						}, false);
 					} else {
 						favoriteButton.value = "Favorite";
 						favoriteButton.addEventListener("click", function listen(event){
 							event.target.value="Unfavorite";
 							addFavorite(event);
-							event.target.removeEventListener("click", listen);
-							event.target.addEventListener("click", removeFavorite, false);
+							changeButtonToUnfavoriteButton(event);
 						}, false);
 					}
 					ans.appendChild(favoriteButton);
@@ -208,13 +206,55 @@ if(isset($_SESSION['username'])){
 		});
 	}
 
+	function changeButtonToFavoriteButton(event){ // change an unfav button to fav button after pressed
+		let par = event.target.parentNode;
+		let id = event.target.name;
+		event.target.remove();
+		let favoriteButton = document.createElement("input");
+		favoriteButton.type="submit"; favoriteButton.name=id; favoriteButton.value="Favorite";
+		favoriteButton.addEventListener("click", function(event){
+			addFavorite(event);
+			changeButtonToUnfavoriteButton(event);
+		}, false);
+		par.appendChild(favoriteButton);
+	}
+
+	function changeButtonToUnfavoriteButton(event){ // change an unfav button to fav button after pressed
+		let par = event.target.parentNode;
+		let id = event.target.name;
+		event.target.remove();
+		let favoriteButton = document.createElement("input");
+		favoriteButton.type="submit"; favoriteButton.name=id; favoriteButton.value="Unfavorite";
+		favoriteButton.addEventListener("click", function(event){
+			deleteFavorite(event);
+			changeButtonToFavoriteButton(event);
+		}, false);
+		par.appendChild(favoriteButton);
+	}
+
+	function deleteFavorite(event){
+		let name = event.target.name;
+		let eventObject = {
+			"id": name,
+			"username": <?php if(isset($_SESSION['username'])) {echo json_encode($_SESSION['username']);} else echo "-1"; ?>
+		}
+		fetch("delete_favorite.php", {
+			method: 'POST',
+			body: JSON.stringify(eventObject),
+			headers: { 'content-type': 'application/json' }
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	}
+
 	function addFavorite(event){
 		let name = event.target.name;
 		for(let key in results){
 			if(results.hasOwnProperty(key)){
 				let question = results[key];
 				if(question.id == name){
-					// match, add to favorite
+					// matched the search result; add to favorite
 					let eventObject = {
 					"username": <?php if(isset($_SESSION['username'])) {echo json_encode($_SESSION['username']);} else echo "-1"; ?>, 
 					"id": (!question.id ? -1 : question.id ), 
