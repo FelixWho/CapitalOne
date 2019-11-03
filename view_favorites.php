@@ -45,6 +45,7 @@ if(isset($_SESSION['username'])){
 <div id="results">
 	<!--will populate with favorites table-->
 </div>
+</body>
 <script>
     $("#back, #logout, #login").button();
 
@@ -113,5 +114,4 @@ if(isset($_SESSION['username'])){
 		});
 	}
 </script>
-</body>
 </html>

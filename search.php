@@ -140,8 +140,8 @@ if(isset($_SESSION['username'])){
         // clear table UI
         let tab = document.getElementById("results");
         if(tab) { tab.innerHTML=""; }
-		if(document.getElementById("nextPage")){
-			document.getElementById("nextPage").remove();
+		if(document.getElementById("nextContainer")){
+			document.getElementById("nextContainer").remove();
 		}
 
 		// check if there is another page, if so add "next page" button
@@ -151,13 +151,18 @@ if(isset($_SESSION['username'])){
 				console.log("No further pages");
 			} else {
 				console.log("There is another page");
+				let contain = document.createElement("DIV");
+				contain.id = "nextContainer";
+				contain.className = "container";
 				let nextPage = document.createElement("input");
 				nextPage.type = "submit"; nextPage.value="Next Page"; nextPage.id = "nextPage";
 				nextPage.addEventListener("click", function(event){
 					displayEvents(offset+100);
 				},false,);
-				insertAfter(nextPage, document.getElementById("results"));
+				contain.appendChild(nextPage);
+				insertAfter(contain, document.getElementById("results"));
 				$("#nextPage").button();
+				$("#nextPage").css({"border":0});
 			}
 		});
 
@@ -325,7 +330,6 @@ if(isset($_SESSION['username'])){
 		const datMax = document.getElementById("dateMaxParam").value.replace("/", "-");
 		const category = document.getElementById("catParam").value;
 		
-		let callURLs = [];
 		let url = "http://jservice.io/api/clues?"
 		.concat("value="+encodeURIComponent(val))
 		.concat("&min_date="+encodeURIComponent(datMin))
@@ -404,6 +408,11 @@ if(isset($_SESSION['username'])){
     	return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate());
 	};
 
+	Date.prototype.toHTMLFormat = function() {
+		// convert JS Date type to HTML date format
+    	return  twoDigits(1 + this.getUTCMonth()) + "/" + twoDigits(this.getUTCDate())+ "/" +this.getUTCFullYear();
+	};
+
 	function dateCheck(event){ // ensures min date <= max date
 		let in1 = document.getElementById("dateMinParam").value;
 		let in2 = document.getElementById("dateMaxParam").value;
@@ -411,17 +420,20 @@ if(isset($_SESSION['username'])){
         let dMax = new Date(in2.replace("/", "-"));
 		if(event == document.getElementById("dateMinParam") && dMin > dMax) {
 			document.getElementById("dateMaxParam").value = in1;
-		}
-		if(dMax < dMin){
+		} else if(dMax < dMin){
 			document.getElementById("dateMinParam").value = in2;
 		}
 
 		// fill in other field if empty
 		if(event == document.getElementById("dateMinParam") && (in2 == null || in2 == "")){
-			document.getElementById("dateMaxParam").value = in1;
+			if(dMin > new Date()) {
+				document.getElementById("dateMaxParam").value = in1;
+			} else {
+				document.getElementById("dateMaxParam").value = new Date().toHTMLFormat();
+			}
 		}
 		if(event == document.getElementById("dateMaxParam") && (in1 == null || in1 == "")){
-			document.getElementById("dateMinParam").value = in2;
+			document.getElementById("dateMinParam").value = "01/01/1950";
 		}
 		
 	}
