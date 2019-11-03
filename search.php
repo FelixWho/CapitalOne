@@ -3,8 +3,7 @@
 <head>
     <title>Jeopardy Search Engine</title>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="theme.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">	<link rel="stylesheet" href="theme.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -29,24 +28,14 @@ if(isset($_SESSION['username'])){
 	echo "</div>";
 } else {
 	# not logged in
-	echo "<div><form action = 'login.html'>";
-    echo 	"<input type='submit' value='Log in' id='login'/>";
-    echo "</form></div>";
+	echo "<div class='container'>";
+	echo 	"<div><form action = 'login.html'>";
+    echo 		"<input type='submit' value='Log in' id='login'/>";
+	echo 	"</form></div>";
+	echo "</div>";
 }
 ?>
 <div class="container2">
-	<!--search by date-->
-	<div>
-	<input type="text" id = "dateMinParam" placeholder="Minimum air date" readonly>
-	</div>
-	<div>
-	<input type="text" id = "dateMaxParam" placeholder="Maximum air date" readonly>
-	</div>
-
-	<div>
-	<input type="submit" id="clearDate" value="Clear dates">
-	</div>
-
 	<!--search by difficulty value-->
 	<div>
 		<input list="values" id = "valueParam" placeholder="Difficulty">
@@ -61,17 +50,28 @@ if(isset($_SESSION['username'])){
 			<option value="1000">
 		</datalist>
 	</div>
-
 	<!--search by category-->
 	<div>
-	<input list="category" id = "catParam" placeholder="Category">
-	<datalist id="category">
-		<!--will populate with javascript + webscraping-->
-	</datalist>
+		<input list="category" id = "catParam" placeholder="Category">
+		<datalist id="category">
+			<!--will populate with javascript + webscraping-->
+		</datalist>
 	</div>
-
 	<div style="text-align:center;">
 		<input type="submit" id = "search" value="Search">
+	</div>
+</div>
+
+<div class="container3">
+	<!--search by date-->
+	<div>
+		<input type="text" id = "dateMinParam" placeholder="Minimum air date" readonly>
+	</div>
+	<div>
+		<input type="text" id = "dateMaxParam" placeholder="Maximum air date" readonly>
+	</div>
+	<div>
+		<input type="submit" id="clearDate" value="Clear dates">
 	</div>
 </div>
 

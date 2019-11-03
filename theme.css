@@ -6,17 +6,28 @@ body {
     position: relative;
     margin-top: 100px;
     zoom: 1;
+    border: 0;
 }
-.container{ display:flex;
+.container{ 
+    display:flex;
     justify-content:flex-end;
+
 }
 .container2{ display:flex;
     justify-content:center;
     display: flex;
-    -moz-box-sizing: content-box; /* or `border-box` */
+    -moz-box-sizing: content-box; 
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
-    padding: 50px;
+    padding: 25px;
+    padding-bottom: 5px;
+}
+.container3{ display:flex;
+    justify-content:center;
+    display: flex;
+    -moz-box-sizing: content-box; 
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
 }
 #search {
     background-color: #0073ff;
@@ -27,10 +38,17 @@ body {
     border: 0;
     -webkit-appearance: none;
 }
-#login,#valueParam,#logout,#fav,#back,#catParam,#clearDate, #dateMinParam, #dateMaxParam  {
+#login,#valueParam,#logout,#fav,#back,#catParam  {
     display: inline-block;
     padding: 10px 15px;
     font-size: 20px;
+    border:0;
+    -webkit-appearance: none;
+}
+#clearDate, #dateMinParam, #dateMaxParam{
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 15px;
     border:0;
     -webkit-appearance: none;
 }
@@ -39,6 +57,155 @@ body {
     border: 0;
 }
 
-/*.align-left{ float: left; width:50%; }
-.align-right{ float: right; width:50%; }
-*/
+/*Impossible to be foolproof, but trying to optimize for different screen sizes*/
+/*source for size reference: https://stackoverflow.com/questions/6370690/media-queries-how-to-target-desktop-tablet-and-mobile*/
+@media (min-width:320px) { 
+    #login,#valueParam,#logout,#fav,#back,#catParam  {
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 10px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #clearDate, #dateMinParam, #dateMaxParam{
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 8px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #search {
+        background-color: #0073ff;
+        color: white;
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 10px;
+        border: 0;
+        -webkit-appearance: none;
+    }
+}
+@media (min-width:481px){ 
+    #login,#valueParam,#logout,#fav,#back,#catParam  {
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 12px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #clearDate, #dateMinParam, #dateMaxParam{
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 10px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #search {
+        background-color: #0073ff;
+        color: white;
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 12px;
+        border: 0;
+        -webkit-appearance: none;
+    }
+}
+@media (min-width:641px) {
+    #login,#valueParam,#logout,#fav,#back,#catParam  {
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 15px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #clearDate, #dateMinParam, #dateMaxParam{
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 13px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #search {
+        background-color: #0073ff;
+        color: white;
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 15px;
+        border: 0;
+        -webkit-appearance: none;
+    }
+}
+@media (min-width:961px)  {
+    #login,#valueParam,#logout,#fav,#back,#catParam  {
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 20px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #clearDate, #dateMinParam, #dateMaxParam{
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 15px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #search {
+        background-color: #0073ff;
+        color: white;
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 20px;
+        border: 0;
+        -webkit-appearance: none;
+    }
+}
+@media (min-width:1025px) {
+    #login,#valueParam,#logout,#fav,#back,#catParam  {
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 20px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #clearDate, #dateMinParam, #dateMaxParam{
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 16px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #search {
+        background-color: #0073ff;
+        color: white;
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 20px;
+        border: 0;
+        -webkit-appearance: none;
+    }
+}
+@media (min-width:1281px) {
+    #login,#valueParam,#logout,#fav,#back,#catParam  {
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 20px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #clearDate, #dateMinParam, #dateMaxParam{
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 16px;
+        border:0;
+        -webkit-appearance: none;
+    }
+    #search {
+        background-color: #0073ff;
+        color: white;
+        display: inline-block;
+        padding: 10px 15px;
+        font-size: 20px;
+        border: 0;
+        -webkit-appearance: none;
+    }
+}

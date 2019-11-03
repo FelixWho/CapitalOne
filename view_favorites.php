@@ -3,8 +3,7 @@
 <head>
     <title>Favorite Questions</title>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="theme.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">    <link rel="stylesheet" href="theme.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -12,6 +11,7 @@
 <body id="body">
 <?php
 session_start();
+
 if(isset($_SESSION['username'])){
     # logged in
     echo "<div class='container'>";
@@ -36,8 +36,8 @@ if(isset($_SESSION['username'])){
 	echo    "<div><form action = 'login.html'>";
     echo    "<input type='submit' value='Log in' id='login'/>";
     echo "</form></div>";
+    echo "</div>";
 }
-echo "</div>";
 ?>
 
 <div id="results">
