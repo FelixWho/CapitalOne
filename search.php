@@ -16,6 +16,11 @@ session_start();
 if(isset($_SESSION['username'])){
 	# logged in
 	echo "<div class='container'>";
+	echo    "<div>";
+    echo 	    "<form action = 'jeopardy_demo.php'>";
+    echo 		    "<input type='submit' value='Game on' id='demo'/>";
+    echo 	    "</form>";
+    echo    "</div>";
 	echo 	"<div class = 'align-left'>";
 	echo 		"<form action = 'view_favorites.php'>";
 	echo 			"<input type='submit' value='Favorites' id='fav'/>";
@@ -30,6 +35,11 @@ if(isset($_SESSION['username'])){
 } else {
 	# not logged in
 	echo "<div class='container'>";
+	echo    "<div>";
+    echo 	    "<form action = 'jeopardy_demo.php'>";
+    echo 		    "<input type='submit' value='Game on' id='demo'/>";
+    echo 	    "</form>";
+    echo    "</div>";
 	echo 	"<div><form action = 'login.html'>";
     echo 		"<input type='submit' value='Log in' id='login'/>";
 	echo 	"</form></div>";
@@ -106,7 +116,7 @@ if(isset($_SESSION['username'])){
         }
     });
 
-	$("#fav, #logout, #clearDate, #search, #login").button();
+	$("#demo, #fav, #logout, #clearDate, #search, #login").button();
 
     $("#results").accordion({ header: "h3", collapsible: true, active: false });
 
