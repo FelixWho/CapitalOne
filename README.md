@@ -13,7 +13,7 @@ PHP, Javascript, HTML, CSS, JQuery, MySQL
 - Logged in users can save questions to a favorites collection
 - Users and non-users can simulate a Jeopardy board
 - Use of jService's search API to match categories with a user's queries in real time (non-mobile only)
-  - This was done through web scraping in pure Javascriipt
+  - This was done through web scraping in pure Javascript
 - Inspired by flat UI
 
 ### Website
