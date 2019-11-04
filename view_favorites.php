@@ -21,8 +21,8 @@ if(isset($_SESSION['username'])){
     echo 		    "<input type='submit' value='Back' id='back'/>";
     echo 	    "</form>";
     echo    "</div>";
-	echo    "<div>";
-	echo 	    "<form action = 'logout.php'>";
+    echo    "<div>";
+    echo 	    "<form action = 'logout.php'>";
     printf("<input type='submit' value='Log out %s' id='logout'>", htmlentities($_SESSION['username']));
     echo 	    "</form>";
     echo    "</div>";
@@ -35,7 +35,7 @@ if(isset($_SESSION['username'])){
     echo 		    "<input type='submit' value='Back' id='back'/>";
     echo 	    "</form>";
     echo    "</div>";
-	echo    "<div><form action = 'login.html'>";
+    echo    "<div><form action = 'login.html'>";
     echo    "<input type='submit' value='Log in' id='login'/>";
     echo "</form></div>";
     echo "</div>";
@@ -77,7 +77,7 @@ if(isset($_SESSION['username'])){
 								+ "<p>Value: "+question.value+"</p>"
 								+ "<p>Category: "+question.category.title+"</p>";
 
-                    if(loggedIn == "1") { // add favorite/unfavorite buttons
+                    if(loggedIn == "1") { // add favorite button
                         let favoriteButton = document.createElement("input");
                         favoriteButton.type = "submit"; favoriteButton.name = question.q_id;
                         favoriteButton.value = "Unfavorite";
