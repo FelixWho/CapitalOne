@@ -93,10 +93,10 @@ if(isset($_SESSION['username'])){
 </body>
 <script>
 
-    /******
+/*
                 jQuery UI elements
 				intended for usage across different web browsers
-    ******/
+*/
 
     $("#dateMinParam").datepicker({
         yearRange: "1950:+0",
@@ -106,7 +106,6 @@ if(isset($_SESSION['username'])){
             dateCheck(this);
         }
     });
-
     $("#dateMaxParam").datepicker({
         yearRange: "1950:+0",
         changeMonth: true,
@@ -115,21 +114,19 @@ if(isset($_SESSION['username'])){
             dateCheck(this);
         }
     });
-
 	$("#demo, #fav, #logout, #clearDate, #search, #login").button();
-
     $("#results").accordion({ header: "h3", collapsible: true, active: false });
 
-	/******
+/*
                 GLOBAL VARIABLES
-    ******/
+*/
 
 	let catID = {}; // dictionary holding category-id pairs
 	let results = {}; // dictionary holding parsed api results
 
-	/******
+/*
                 EVENT LISTENERS
-    ******/
+*/
 
 	document.getElementById("search").addEventListener("click", function(event) {displayEvents(0);}, false);
 	document.getElementById("dateMinParam").addEventListener("change", dateCheck, false);
@@ -137,10 +134,10 @@ if(isset($_SESSION['username'])){
 	document.getElementById("catParam").addEventListener("input", fetchCategories, false);
 	document.getElementById("clearDate").addEventListener("click", clearDate, false);
 
-	/******
+/*
                 FUNCTIONS
                 (extra functions may be included as files) 
-    ******/
+*/
 
 	function displayEvents(offset){
 		if(!checkCategoryBox()){
@@ -148,8 +145,8 @@ if(isset($_SESSION['username'])){
 		}
 
         // clear table UI
-        let tab = document.getElementById("results");
-        if(tab) { tab.innerHTML=""; }
+		let tab = document.getElementById("results");
+		if(tab) { tab.innerHTML=""; }
 		if(document.getElementById("nextContainer")){
 			document.getElementById("nextContainer").remove();
 		}
@@ -303,8 +300,9 @@ if(isset($_SESSION['username'])){
 
 	}
 
-	function checkCategoryBox(){ // helper function that checks if category box has input,
-								 // and if the input is a valid category
+	function checkCategoryBox(){ 
+		// helper function that checks if category box has input,
+		// and if the input is a valid category
 		let box = document.getElementById("catParam");
 		if(box.value.length > 0 && Object.keys(catID).indexOf(box.value) == -1){
 			// user inputted a category that doesn't exist, alert
@@ -346,7 +344,7 @@ if(isset($_SESSION['username'])){
 		.concat("&max_date="+encodeURIComponent(datMax));
 		if(offset != null){
 			url = url.concat("&offset="+encodeURIComponent(offset));
-        }
+		}
 		if(category in catID){
 			url = url.concat("&category="+encodeURIComponent(catID[category]));
 		} else if(category.length > 0){
@@ -400,34 +398,34 @@ if(isset($_SESSION['username'])){
 	function clearDate(event){ // clear date inputs
 		let dates = $("input[id$='dateMinParam'], input[id$='dateMaxParam']");
 		dates.attr('value', '');
-    	dates.each(function(){
-        	$.datepicker._clearDate(this);
-    	});
+		dates.each(function(){
+			$.datepicker._clearDate(this);
+		});
 	}
 
 	function twoDigits(d) {
 		// source: https://stackoverflow.com/questions/5129624/convert-js-date-time-to-mysql-datetime
-    	if(0 <= d && d < 10) return "0" + d.toString();
-    	if(-10 < d && d < 0) return "-0" + (-1*d).toString();
-    	return d.toString();
+		if(0 <= d && d < 10) return "0" + d.toString();
+		if(-10 < d && d < 0) return "-0" + (-1*d).toString();
+		return d.toString();
 	}
 
 	Date.prototype.toSQLFormat = function() {
 		// convert JS Date type to MySQL date format
 		// source: https://stackoverflow.com/questions/5129624/convert-js-date-time-to-mysql-datetime
-    	return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate());
+		return this.getUTCFullYear() + "-" + twoDigits(1 + this.getUTCMonth()) + "-" + twoDigits(this.getUTCDate());
 	};
 
 	Date.prototype.toHTMLFormat = function() {
 		// convert JS Date type to HTML date format
-    	return  twoDigits(1 + this.getUTCMonth()) + "/" + twoDigits(this.getUTCDate())+ "/" +this.getUTCFullYear();
+		return  twoDigits(1 + this.getUTCMonth()) + "/" + twoDigits(this.getUTCDate())+ "/" +this.getUTCFullYear();
 	};
 
 	function dateCheck(event){ // ensures min date <= max date
 		let in1 = document.getElementById("dateMinParam").value;
 		let in2 = document.getElementById("dateMaxParam").value;
-        let dMin = new Date(in1.replace("/", "-"));
-        let dMax = new Date(in2.replace("/", "-"));
+		let dMin = new Date(in1.replace("/", "-"));
+		let dMax = new Date(in2.replace("/", "-"));
 		if(event == document.getElementById("dateMinParam") && dMin > dMax) {
 			document.getElementById("dateMaxParam").value = in1;
 		} else if(dMax < dMin){
@@ -450,7 +448,7 @@ if(isset($_SESSION['username'])){
 
 	function insertAfter(newNode, referenceNode) {
 		// source: https://stackoverflow.com/questions/4793604/how-to-insert-an-element-after-another-element-in-javascript-without-using-a-lib
-    	referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+		referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 	}
 	
 	
