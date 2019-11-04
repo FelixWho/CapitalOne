@@ -94,7 +94,7 @@ if(isset($_SESSION['username'])){
 <script>
 
 /*
-                jQuery UI elements
+                JQUERY UI
 				intended for usage across different web browsers
 */
 
