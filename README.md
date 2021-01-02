@@ -3,10 +3,6 @@ Capital One's Engineering Summit Programming Challenge 2019
 
 *Build a web app to find trivia questions by category*
 
-### Update 11/15/2019
-
-My submission was selected by Capital One's team and I'll be attending their Engineering Summit this coming winter!
-
 ### Update 01/06/2020
 
 JQuery out of date; I have no intentions of changing the code, however.
